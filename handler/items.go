@@ -15,6 +15,10 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	if len(request.Name) == 0 || request.Cost < 0 {
+		respondError(w, http.StatusBadRequest, "cost should be higher then 0.00 and name should exist")
+		return
+	}
 
 	err = h.DB.CreateProduct(request)
 	if err != nil {
@@ -22,7 +26,7 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, http.StatusOK, "Product created")
+	respondJSON(w, http.StatusCreated, "Product created")
 }
 
 func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
